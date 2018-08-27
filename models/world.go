@@ -14,6 +14,11 @@ type World struct {
 	Zombies map[interface{}]Zombie
 }
 
+func (w *World) AddPlayers(player Player) {
+
+	w.Players[player.Id] = player
+}
+
 /*
 GetOnlineCount  Joined players count
 */

@@ -16,8 +16,15 @@ func (z *Zombie) GetLoc() (x, y int) {
 }
 
 func (z *Zombie) ChangeLoc() {
-	z.PositionX = rand.Intn(10)
-	z.PositionY = rand.Intn(30)
+	rand.Seed(time.Now().UnixNano())
+	z.PositionX = rand.Intn(MaxX)
+	z.PositionY = rand.Intn(MaxY)
+	if z.PositionX == 0 {
+		z.PositionX++
+	}
+	if z.PositionY == 0 {
+		z.PositionY++
+	}
 	fmt.Printf("Spawned night-king at x: %d y: %d \n", z.PositionX, z.PositionY)
 
 	for {

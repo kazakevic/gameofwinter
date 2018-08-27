@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"kazakevic/winter/models"
 	"log"
-	"math/rand"
 	"net/http"
 	"time"
 
@@ -84,27 +83,22 @@ func (c *Client) readPump() {
 
 		msg := Message{Body: message, SenderID: c.id}
 
-		if SpawnPlayer(message) != "" {
-			rand.Seed(time.Now().UnixNano())
+		if ParseUsername(message) != "" {
+
 			player := models.Player{}
-			player.Username = SpawnPlayer(message)
-			player.Username = c.id
+			player.Spawn()
+			player.Username = ParseUsername(message)
+			player.Id = c.id
 
-			player.PositionX = rand.Intn(10)
-			player.PositionY = rand.Intn(30)
-
-			if player.PositionX == 0 {
-				player.PositionX++
-			}
-			if player.PositionY == 0 {
-				player.PositionY++
-			}
+			world.AddPlayers(player)
 
 			fmt.Printf("Spawned new player (%s), at X: %d and Y: %d \n", player.Username, player.PositionX, player.PositionY)
+			fmt.Printf("-----Online players: %d \n\n", world.GetOnlineCount())
 		}
 
 		shoot := MakeShoot(message)
 		shoot.PlayerID = c.id
+
 		if zombie.Hit(shoot) {
 			fmt.Printf("----->Hit success! \n")
 		} else {

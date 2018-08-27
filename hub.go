@@ -79,7 +79,7 @@ func (h *Hub) run() {
 		}
 	}
 }
-func SpawnPlayer(message []byte) string {
+func ParseUsername(message []byte) string {
 	re := regexp.MustCompile(`(?mi)^(Start)\s(.*)`)
 	match := re.FindStringSubmatch(string(message))
 
