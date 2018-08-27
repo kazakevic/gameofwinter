@@ -6,8 +6,10 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
+	"time"
 )
 
 var addr = flag.String("addr", ":8080", "http service address")
@@ -29,6 +31,7 @@ func main() {
 	flag.Parse()
 	hub := newHub()
 	go hub.run()
+	//go zombie()
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
@@ -37,4 +40,12 @@ func main() {
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
+
+}
+func zombie() {
+	for {
+		time.Sleep(2000 * time.Millisecond)
+		fmt.Println("zombie walking")
+	}
+
 }

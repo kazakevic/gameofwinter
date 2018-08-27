@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Winter Is comming</title>
+</head>
+<body>
+
+    <!-- <label for="username">Username:</label>
+    <input type="text" name="username" id="username"> -->
+    <button id="connect">Connect to server</button>
+    <button id="disconnect" disabled>Disconnect</button><br><br>
+
+    <div id="output"></div>
+
+
+    <input type="text" name="" id="msg">
+    <button id="send">Send</button>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script language="javascript" type="text/javascript">
+        var wsUri = "ws://localhost:8080/ws";
+        var output;
+        function init(){
+          output = $("#output");
+          testWebSocket();
+        }
+      
+        function testWebSocket()
+        {
+          websocket = new WebSocket(wsUri);
+          websocket.onopen = function(evt) { onOpen(evt) };
+          websocket.onclose = function(evt) { onClose(evt) };
+          websocket.onmessage = function(evt) { onMessage(evt) };
+          websocket.onerror = function(evt) { onError(evt) };
+        }
+      
+        function onOpen(evt)
+        {
+          $("#username").prop("disabled", true);
+          $("#disconnect").prop("disabled", false);
+          writeToScreen("CONNECTED to server");
+        //   var username = $("#username").val()
+        //   var msg = {
+        //                 //connect handler - 0
+        //                 HandlerID: 0,
+        //                 Body: btoa(username)
+        //             }
+        // doSend(JSON.stringify(msg))
+        }
+      
+        function onClose(evt){
+          writeToScreen("DISCONNECTED");
+          $("#disconnect").prop("disabled", true);
+          $("#username").prop("disabled", false);
+        }
+      
+        function onMessage(evt){
+            //var resp = jQuery.parseJSON(evt.data)
+            console.log(evt.data)
+            writeToScreen(evt.data);
+          //websocket.close();
+        }
+      
+        function onError(evt){
+          writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+        }
+      
+        function doSend(message){
+         // writeToScreen("SENT: " + message);
+          websocket.send(message);
+        }
+      
+        function writeToScreen(message){
+            //output.html("");
+            output.append("<br>"+message+"<br>")
+        }
+
+        //window.addEventListener("load", init, false);
+        </script>
+
+
+<script>
+$("#connect").on("click", function(){
+    init();
+});
+
+$("#disconnect").on("click", function(){
+    //disconnect handler - 1
+    websocket.close();
+});
+
+$("#send").on("click", function(){
+    var msg = $("#msg").val()
+    // var resp = {HandlerID: 0,Body: btoa(msg)}
+    // doSend(JSON.stringify(resp))
+    doSend(msg)
+});
+</script>
+
+</body>
+</html>

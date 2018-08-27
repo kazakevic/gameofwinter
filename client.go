@@ -67,6 +67,7 @@ func (c *Client) readPump() {
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
 		_, message, err := c.conn.ReadMessage()
+		//fmt.Printf("New message from client: (%s) \n", c.id)
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
@@ -74,7 +75,12 @@ func (c *Client) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		c.hub.broadcast <- message
+		// msg := make(map[string][]byte)
+		// msg[c.id] = message
+
+		msg := Message{Body: message, SenderID: c.id}
+
+		c.hub.broadcast <- msg
 	}
 }
 
