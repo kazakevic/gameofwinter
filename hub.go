@@ -6,6 +6,8 @@ package main
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
 
 	"github.com/rs/xid"
 )
@@ -74,4 +76,18 @@ func (h *Hub) run() {
 			}
 		}
 	}
+}
+func SpawnPlayer(message []byte) string {
+
+	msg := string(message)
+	re := regexp.MustCompile(`(?mi)^(Start)\s(.*)`)
+	start := re.FindAllString(msg, -1)
+
+	if start != nil {
+		tmp := strings.Split(msg, " ")
+		playerName := tmp[1]
+		return playerName
+	}
+	return ""
+
 }

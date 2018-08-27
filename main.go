@@ -7,6 +7,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"kazakevic/winter/models"
 	"log"
 	"net/http"
 	"time"
@@ -28,6 +29,11 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	//init world
+	world := models.World{}
+	//init players map
+	world.Players = make(map[interface{}]models.Player)
+
 	flag.Parse()
 	hub := newHub()
 	go hub.run()

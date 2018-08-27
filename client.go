@@ -6,7 +6,10 @@ package main
 
 import (
 	"bytes"
+	"fmt"
+	"kazakevic/winter/models"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -42,8 +45,9 @@ var upgrader = websocket.Upgrader{
 
 // Client is a middleman between the websocket connection and the hub.
 type Client struct {
-	id  string
-	hub *Hub
+	id       string
+	username string
+	hub      *Hub
 
 	// The websocket connection.
 	conn *websocket.Conn
@@ -79,6 +83,24 @@ func (c *Client) readPump() {
 		// msg[c.id] = message
 
 		msg := Message{Body: message, SenderID: c.id}
+
+		if SpawnPlayer(message) != "" {
+			rand.Seed(time.Now().UnixNano())
+			player := models.Player{}
+			player.Username = SpawnPlayer(message)
+
+			player.PositionX = rand.Intn(10)
+			player.PositionY = rand.Intn(30)
+
+			if player.PositionX == 0 {
+				player.PositionX++
+			}
+			if player.PositionY == 0 {
+				player.PositionY++
+			}
+
+			fmt.Printf("Spawned new player (%s), at X: %d and Y: %d \n", player.Username, player.PositionX, player.PositionY)
+		}
 
 		c.hub.broadcast <- msg
 	}
