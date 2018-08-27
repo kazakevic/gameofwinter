@@ -79,15 +79,28 @@ func (h *Hub) run() {
 }
 func SpawnPlayer(message []byte) string {
 
-	msg := string(message)
 	re := regexp.MustCompile(`(?mi)^(Start)\s(.*)`)
-	start := re.FindAllString(msg, -1)
+	match := re.FindStringSubmatch(string(message))
 
-	if start != nil {
-		tmp := strings.Split(msg, " ")
-		playerName := tmp[1]
-		return playerName
+	if len(match) > 0 {
+		match[1] = strings.ToLower(match[1])
+		if match[1] == "start" {
+			playerName := match[2]
+			return playerName
+		}
 	}
 	return ""
-
 }
+
+// func Shoot(message []byte) {
+// 	re := regexp.MustCompile(`(?mi)^(Shoot)\s(\d+)\s(\d+)`)
+// 	match := re.FindStringSubmatch(string(message))
+
+// 	if match[1] == "Shoot" {
+// 		//shoot coordinates
+// 		match[2]
+// 		match[3]
+
+// 	}
+
+// }
