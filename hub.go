@@ -7,6 +7,7 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/rs/xid"
@@ -78,7 +79,6 @@ func (h *Hub) run() {
 	}
 }
 func SpawnPlayer(message []byte) string {
-
 	re := regexp.MustCompile(`(?mi)^(Start)\s(.*)`)
 	match := re.FindStringSubmatch(string(message))
 
@@ -92,15 +92,17 @@ func SpawnPlayer(message []byte) string {
 	return ""
 }
 
-// func Shoot(message []byte) {
-// 	re := regexp.MustCompile(`(?mi)^(Shoot)\s(\d+)\s(\d+)`)
-// 	match := re.FindStringSubmatch(string(message))
+func ParseShoot(message []byte) {
+	re := regexp.MustCompile(`(?mi)^(Shoot)\s(\d+)\s(\d+)`)
+	match := re.FindStringSubmatch(string(message))
 
-// 	if match[1] == "Shoot" {
-// 		//shoot coordinates
-// 		match[2]
-// 		match[3]
+	if len(match) > 0 {
+		match[1] = strings.ToLower(match[1])
+		if match[1] == "shoot" {
+			x, _ := strconv.Atoi(match[2])
+			y, _ := strconv.Atoi(match[3])
+			fmt.Printf("Shoot x: %d y: %d", x, y)
+		}
+	}
 
-// 	}
-
-// }
+}

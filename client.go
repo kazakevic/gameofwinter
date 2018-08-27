@@ -102,6 +102,8 @@ func (c *Client) readPump() {
 			fmt.Printf("Spawned new player (%s), at X: %d and Y: %d \n", player.Username, player.PositionX, player.PositionY)
 		}
 
+		ParseShoot(message)
+
 		c.hub.broadcast <- msg
 	}
 }
