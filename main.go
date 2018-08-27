@@ -18,7 +18,7 @@ var zombie = models.Zombie{}
 var world = models.World{}
 
 func main() {
-	world.Players = make(map[interface{}]models.Player)
+	world.Players = make(map[string]models.Player)
 	flag.Parse()
 	hub := newHub()
 	go hub.run()

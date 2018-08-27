@@ -114,3 +114,11 @@ func MakeShoot(message []byte) models.Shoot {
 	}
 	return shoot
 }
+
+func ParseCommands(message []byte) {
+
+	if string(message) == "/players" {
+		fmt.Print(world.GePlayersList())
+	}
+
+}

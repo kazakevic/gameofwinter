@@ -104,6 +104,7 @@ func (c *Client) readPump() {
 		} else {
 			fmt.Printf("----->Miss :-( \n")
 		}
+		ParseCommands(message)
 
 		c.hub.broadcast <- msg
 	}

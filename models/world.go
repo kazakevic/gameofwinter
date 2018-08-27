@@ -10,12 +10,11 @@ const MaxY = 30
 World model
 */
 type World struct {
-	Players map[interface{}]Player
+	Players map[string]Player
 	Zombies map[interface{}]Zombie
 }
 
 func (w *World) AddPlayers(player Player) {
-
 	w.Players[player.Id] = player
 }
 
@@ -25,4 +24,12 @@ GetOnlineCount  Joined players count
 func (w *World) GetOnlineCount() int {
 	online := len(w.Players)
 	return online
+}
+
+func (w *World) GePlayersList() string {
+	str := ""
+	for id, player := range w.Players {
+		str += "Player ID: [" + id + "] Player name: [" + player.Username + "] \n"
+	}
+	return str
 }
