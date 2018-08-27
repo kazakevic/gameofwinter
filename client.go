@@ -88,6 +88,7 @@ func (c *Client) readPump() {
 			rand.Seed(time.Now().UnixNano())
 			player := models.Player{}
 			player.Username = SpawnPlayer(message)
+			player.Username = c.id
 
 			player.PositionX = rand.Intn(10)
 			player.PositionY = rand.Intn(30)
@@ -102,7 +103,13 @@ func (c *Client) readPump() {
 			fmt.Printf("Spawned new player (%s), at X: %d and Y: %d \n", player.Username, player.PositionX, player.PositionY)
 		}
 
-		ParseShoot(message)
+		shoot := MakeShoot(message)
+		shoot.PlayerID = c.id
+		if zombie.Hit(shoot) {
+			fmt.Printf("----->Hit success! \n")
+		} else {
+			fmt.Printf("----->Miss :-( \n")
+		}
 
 		c.hub.broadcast <- msg
 	}

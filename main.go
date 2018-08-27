@@ -6,11 +6,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"kazakevic/winter/models"
 	"log"
 	"net/http"
-	"time"
 )
 
 var addr = flag.String("addr", ":8080", "http service address")
@@ -28,16 +26,19 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "home.html")
 }
 
+var zombie = models.Zombie{}
+var world = models.World{}
+
 func main() {
-	//init world
-	world := models.World{}
+
 	//init players map
 	world.Players = make(map[interface{}]models.Player)
 
 	flag.Parse()
 	hub := newHub()
 	go hub.run()
-	//go zombie()
+	go zombie.ChangeLoc()
+
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
@@ -45,13 +46,6 @@ func main() {
 	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
-	}
-
-}
-func zombie() {
-	for {
-		time.Sleep(2000 * time.Millisecond)
-		fmt.Println("zombie walking")
 	}
 
 }

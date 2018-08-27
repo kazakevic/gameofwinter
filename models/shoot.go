@@ -1,6 +1,7 @@
 package models
 
 type Shoot struct {
+	PlayerID  string
 	PositionX int
 	PositionY int
 }

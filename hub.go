@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"kazakevic/winter/models"
 	"regexp"
 	"strconv"
 	"strings"
@@ -92,17 +93,24 @@ func SpawnPlayer(message []byte) string {
 	return ""
 }
 
-func ParseShoot(message []byte) {
+func MakeShoot(message []byte) models.Shoot {
 	re := regexp.MustCompile(`(?mi)^(Shoot)\s(\d+)\s(\d+)`)
 	match := re.FindStringSubmatch(string(message))
+	shoot := models.Shoot{}
 
 	if len(match) > 0 {
 		match[1] = strings.ToLower(match[1])
 		if match[1] == "shoot" {
 			x, _ := strconv.Atoi(match[2])
 			y, _ := strconv.Atoi(match[3])
-			fmt.Printf("Shoot x: %d y: %d", x, y)
+
+			shoot := models.Shoot{}
+			shoot.PositionX = x
+			shoot.PositionY = y
+
+			fmt.Printf("Shoot x: %d y: %d \n", x, y)
+			return shoot
 		}
 	}
-
+	return shoot
 }
