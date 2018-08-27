@@ -6,7 +6,7 @@ package main
 
 import (
 	"fmt"
-	"kazakevic/winter/models"
+	"kazakevic/gameofwinter/models"
 	"regexp"
 	"strconv"
 	"strings"
@@ -57,6 +57,8 @@ func (h *Hub) run() {
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
 				fmt.Println("Client closed connection", client.id)
+				//cleanup map
+				world.DeletePlayer(client.id)
 				delete(h.clients, client)
 				close(client.send)
 			}

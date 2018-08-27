@@ -7,7 +7,7 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"kazakevic/winter/models"
+	"kazakevic/gameofwinter/models"
 	"log"
 	"net/http"
 	"time"

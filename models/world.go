@@ -18,6 +18,10 @@ func (w *World) AddPlayers(player Player) {
 	w.Players[player.Id] = player
 }
 
+func (w *World) DeletePlayer(playerId string) {
+	delete(w.Players, playerId)
+}
+
 /*
 GetOnlineCount  Joined players count
 */

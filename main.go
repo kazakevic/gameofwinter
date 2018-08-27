@@ -6,7 +6,7 @@ package main
 
 import (
 	"flag"
-	"kazakevic/winter/models"
+	"kazakevic/gameofwinter/models"
 	"log"
 	"net/http"
 )
