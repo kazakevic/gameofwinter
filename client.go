@@ -7,6 +7,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"kazakevic/gameofwinter/helpers"
 	"kazakevic/gameofwinter/models"
 	"log"
 	"net/http"
@@ -83,27 +84,32 @@ func (c *Client) readPump() {
 
 		msg := Message{Body: message, SenderID: c.id}
 
-		if ParseUsername(message) != "" {
-
+		if helpers.DetectStarGame(message) {
 			player := models.Player{}
 			player.Spawn()
-			player.Username = ParseUsername(message)
+			player.Username = helpers.GetUsernameFromMessage(message)
 			player.Id = c.id
-
 			world.AddPlayers(player)
-
 			fmt.Printf("Spawned new player (%s), at X: %d and Y: %d \n", player.Username, player.PositionX, player.PositionY)
 			fmt.Printf("-----Online players: %d \n\n", world.GetOnlineCount())
+
 		}
 
-		shoot := MakeShoot(message)
-		shoot.PlayerID = c.id
+		if helpers.DetectShoot(message) {
+			x, y := helpers.ShootXY(message)
+			shoot := models.Shoot{}
+			shoot.PositionX = x
+			shoot.PositionY = y
+			shoot.PlayerID = c.id
+			fmt.Printf("Booom x: %d y: %d \n", x, y)
 
-		if zombie.Hit(shoot) {
-			fmt.Printf("----->Hit success! \n")
-		} else {
-			fmt.Printf("----->Miss :-( \n")
+			if zombie.Hit(shoot) {
+				fmt.Printf("----->Hit success! \n")
+			} else {
+				fmt.Printf("----->Miss :-( \n")
+			}
 		}
+
 		ParseCommands(message)
 
 		c.hub.broadcast <- msg
