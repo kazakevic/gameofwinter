@@ -1,5 +1,6 @@
 **Game "Winter is coming"**
-![alt text](https://www.xootr.com/blog/wp-content/uploads/2015/09/winter-is-coming-300x221.jpg "Game "Winter is coming")
+
+[logo]: https://www.xootr.com/blog/wp-content/uploads/2015/09/winter-is-coming-300x221.jpg "Game "Winter is coming"
 
 ##### Some information:
 
