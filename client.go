@@ -81,6 +81,7 @@ func (c *Client) readPump() {
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 
 		msg := Message{Body: message, SenderID: c.id}
+		msg.SenderID = c.id
 
 		if helpers.DetectStarGame(message) {
 			player := models.Player{}
@@ -90,7 +91,7 @@ func (c *Client) readPump() {
 			world.AddPlayers(player)
 			s := fmt.Sprintf("Spawned new player (%s), at X: %d and Y: %d \n", player.Username, player.PositionX, player.PositionY)
 			s += fmt.Sprintf("-----Online players: %d \n\n", world.GetOnlineCount())
-			msg.Body = []byte(s)
+			c.hub.NewMessage(s, "All", c.id)
 		}
 
 		if helpers.DetectShoot(message) {
@@ -100,24 +101,24 @@ func (c *Client) readPump() {
 			shoot.PositionY = y
 			shoot.PlayerID = c.id
 			s := fmt.Sprintf("Booom x: %d y: %d from player [%s] \n", x, y, world.Players[shoot.PlayerID].Username)
-			c.hub.NewMessage(s, "All")
+			c.hub.NewMessage(s, "All", c.id)
 
 			if zombie.Hit(shoot) {
 				s := fmt.Sprintf("----->Hit success! \n")
-				c.hub.NewMessage(s, "Self")
+				c.hub.NewMessage(s, "Self", c.id)
 				//store winner
 				world.Winner = world.Players[shoot.PlayerID]
 				//Show winner
-				s = helpers.AnnounceWinner(world.Players[shoot.PlayerID])
-				c.hub.NewMessage(s, "All")
+				s = fmt.Sprintf("[%s] have killed zombie!", world.Players[shoot.PlayerID].Username)
+				c.hub.NewMessage(s, "All", c.id)
 			} else {
 				s := fmt.Sprintf("----->Miss :-( \n")
-				c.hub.NewMessage(s, "Self")
+				c.hub.NewMessage(s, "Self", c.id)
 			}
 		}
 
 		ParseCommands(message)
-		c.hub.broadcast <- msg
+		//c.hub.broadcast <- msg
 	}
 }
 

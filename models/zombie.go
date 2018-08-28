@@ -3,6 +3,7 @@ package models
 type Zombie struct {
 	PositionX int
 	PositionY int
+	Status    string
 }
 
 /*
@@ -32,6 +33,7 @@ Hit calculates collision between zombie and shoot
 func (z *Zombie) Hit(shoot Shoot) bool {
 
 	if (z.PositionX == shoot.PositionX) && (z.PositionY == shoot.PositionY) {
+		z.Status = "dead"
 		return true
 	}
 

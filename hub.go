@@ -100,8 +100,8 @@ func ParseCommands(message []byte) {
 /*
 NewMessage - broadcast message, type - Self, All, Other
 */
-func (h *Hub) NewMessage(message string, messageType string) {
-	msg := Message{}
+func (h *Hub) NewMessage(message, messageType, sender string) {
+	msg := Message{SenderID: sender}
 	msg.Body = []byte(message)
 	msg.Type = messageType
 	h.broadcast <- msg
@@ -111,14 +111,21 @@ func (h *Hub) NewMessage(message string, messageType string) {
 AnnounceZombieLoc - announces where is zombie now
 */
 func (h *Hub) AnnounceZombieLoc(zombie *models.Zombie) {
-	for {
+	var dead = false
+	for dead == false {
 		time.Sleep(5000 * time.Millisecond)
 		rand.Seed(time.Now().UnixNano())
 		zombie.ChangeLoc(rand.Intn(10), rand.Intn(30))
 		x, y := zombie.GetLoc()
-		s := fmt.Sprintf("Zombie location x:%d y:%d \n", x, y)
+		s := fmt.Sprintf("WALK night-king x:%d y:%d \n", x, y)
+
+		if zombie.Status == "dead" {
+			s = "night-king is dead. This is the end for now. \n"
+			dead = true
+		}
+
 		fmt.Printf(s)
-		h.NewMessage(s, "All")
+		h.NewMessage(s, "All", "")
 	}
 }
 
@@ -128,7 +135,13 @@ AnnounceWinner - announces who is that hero who killed zombie
 func (h *Hub) AnnounceWinner(world *models.World) {
 	for {
 		time.Sleep(10000 * time.Millisecond)
-		s := fmt.Sprintf("Winner now is [%s] \n", world.Winner.Username)
-		h.NewMessage(s, "All")
+
+		s := "Still no winner in this battle :-( \n"
+
+		if len(world.Winner.Username) > 1 {
+			s = fmt.Sprintf("Winner now is [%s] \n", world.Winner.Username)
+		}
+
+		h.NewMessage(s, "All", "")
 	}
 }

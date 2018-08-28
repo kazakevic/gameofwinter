@@ -14,7 +14,7 @@ import (
 var addr = flag.String("addr", ":8080", "http service address")
 
 //Globals
-var zombie = models.Zombie{}
+var zombie = models.Zombie{Status: "alive"}
 var world = models.World{}
 
 func main() {
@@ -22,7 +22,6 @@ func main() {
 	flag.Parse()
 	hub := newHub()
 	go hub.run()
-
 	go hub.AnnounceZombieLoc(&zombie)
 	go hub.AnnounceWinner(&world)
 
