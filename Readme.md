@@ -3,7 +3,7 @@
 
 ##### Some information:
 
-* Project based on gorilla package, chat example: [](https://github.com/gorilla/websocket/tree/master/examples/chat)
+* Project based on gorilla package, chat example: https://github.com/gorilla/websocket/tree/master/examples/chat
 * App is using port 8080 for communication with socket, so be sure it's open
   
 #### How to start:
