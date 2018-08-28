@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"kazakevic/gameofwinter/models"
 	"regexp"
 	"strconv"
 )
@@ -57,4 +58,15 @@ func ShootXY(message []byte) (x, y int) {
 	y, _ = strconv.Atoi(match[3])
 
 	return x, y
+}
+
+/*
+AnnounceWinner - sends message of winner
+*/
+func AnnounceWinner(player models.Player) string {
+	winner := "No winner for now"
+	if len(player.Username) > 1 {
+		winner = "Now winner is --->" + player.Username + "\n"
+	}
+	return winner
 }

@@ -6,6 +6,9 @@ package main
 
 import (
 	"fmt"
+	"kazakevic/gameofwinter/models"
+	"math/rand"
+	"time"
 
 	"github.com/rs/xid"
 )
@@ -15,7 +18,6 @@ import (
 type Hub struct {
 	// Registered clients.
 	clients map[*Client]bool
-
 	// Inbound messages from the clients.
 	//broadcast chan map[string][]byte
 	broadcast chan Message
@@ -29,6 +31,7 @@ type Hub struct {
 type Message struct {
 	SenderID string
 	Body     []byte
+	Type     string
 }
 
 func newHub() *Hub {
@@ -41,10 +44,8 @@ func newHub() *Hub {
 }
 
 func (h *Hub) run() {
-
 	for {
 		select {
-
 		case client := <-h.register:
 			client.id = xid.New().String()
 			fmt.Println("New client joined ", client.id)
@@ -60,15 +61,21 @@ func (h *Hub) run() {
 			}
 		case message := <-h.broadcast:
 			for client := range h.clients {
-
-				//Don't show own messages
-				if message.SenderID == client.id {
-					continue
+				//by default show message to all
+				switch message.Type {
+				case "Others":
+					//Don't show own messages
+					if message.SenderID == client.id {
+						continue
+					}
+				case "Self":
+					//Only for me
+					if message.SenderID != client.id {
+						continue
+					}
 				}
-
 				select {
 				case client.send <- message.Body:
-					//fmt.Println("New message from", string(message[client.id]))
 				default:
 					close(client.send)
 					delete(h.clients, client)
@@ -87,5 +94,41 @@ func ParseCommands(message []byte) {
 	}
 	if string(message) == "/online" {
 		fmt.Printf("-----Online players: %d \n\n", world.GetOnlineCount())
+	}
+}
+
+/*
+NewMessage - broadcast message, type - Self, All, Other
+*/
+func (h *Hub) NewMessage(message string, messageType string) {
+	msg := Message{}
+	msg.Body = []byte(message)
+	msg.Type = messageType
+	h.broadcast <- msg
+}
+
+/*
+AnnounceZombieLoc - announces where is zombie now
+*/
+func (h *Hub) AnnounceZombieLoc(zombie *models.Zombie) {
+	for {
+		time.Sleep(5000 * time.Millisecond)
+		rand.Seed(time.Now().UnixNano())
+		zombie.ChangeLoc(rand.Intn(10), rand.Intn(30))
+		x, y := zombie.GetLoc()
+		s := fmt.Sprintf("Zombie location x:%d y:%d \n", x, y)
+		fmt.Printf(s)
+		h.NewMessage(s, "All")
+	}
+}
+
+/*
+AnnounceWinner - announces who is that hero who killed zombie
+*/
+func (h *Hub) AnnounceWinner(world *models.World) {
+	for {
+		time.Sleep(10000 * time.Millisecond)
+		s := fmt.Sprintf("Winner now is [%s] \n", world.Winner.Username)
+		h.NewMessage(s, "All")
 	}
 }

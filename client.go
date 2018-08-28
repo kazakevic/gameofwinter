@@ -79,8 +79,6 @@ func (c *Client) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		// msg := make(map[string][]byte)
-		// msg[c.id] = message
 
 		msg := Message{Body: message, SenderID: c.id}
 
@@ -90,9 +88,9 @@ func (c *Client) readPump() {
 			player.Username = helpers.GetUsernameFromMessage(message)
 			player.Id = c.id
 			world.AddPlayers(player)
-			fmt.Printf("Spawned new player (%s), at X: %d and Y: %d \n", player.Username, player.PositionX, player.PositionY)
-			fmt.Printf("-----Online players: %d \n\n", world.GetOnlineCount())
-
+			s := fmt.Sprintf("Spawned new player (%s), at X: %d and Y: %d \n", player.Username, player.PositionX, player.PositionY)
+			s += fmt.Sprintf("-----Online players: %d \n\n", world.GetOnlineCount())
+			msg.Body = []byte(s)
 		}
 
 		if helpers.DetectShoot(message) {
@@ -101,17 +99,24 @@ func (c *Client) readPump() {
 			shoot.PositionX = x
 			shoot.PositionY = y
 			shoot.PlayerID = c.id
-			fmt.Printf("Booom x: %d y: %d \n", x, y)
+			s := fmt.Sprintf("Booom x: %d y: %d from player [%s] \n", x, y, world.Players[shoot.PlayerID].Username)
+			c.hub.NewMessage(s, "All")
 
 			if zombie.Hit(shoot) {
-				fmt.Printf("----->Hit success! \n")
+				s := fmt.Sprintf("----->Hit success! \n")
+				c.hub.NewMessage(s, "Self")
+				//store winner
+				world.Winner = world.Players[shoot.PlayerID]
+				//Show winner
+				s = helpers.AnnounceWinner(world.Players[shoot.PlayerID])
+				c.hub.NewMessage(s, "All")
 			} else {
-				fmt.Printf("----->Miss :-( \n")
+				s := fmt.Sprintf("----->Miss :-( \n")
+				c.hub.NewMessage(s, "Self")
 			}
 		}
 
 		ParseCommands(message)
-
 		c.hub.broadcast <- msg
 	}
 }

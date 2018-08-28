@@ -12,6 +12,7 @@ World model
 type World struct {
 	Players map[string]Player
 	Zombies map[interface{}]Zombie
+	Winner  Player
 }
 
 func (w *World) AddPlayers(player Player) {
