@@ -19,6 +19,7 @@ ChangeLoc changes zombie location
 func (z *Zombie) ChangeLoc(x, y int) {
 	z.PositionX = x
 	z.PositionY = y
+
 	if z.PositionX == 0 {
 		z.PositionX++
 	}

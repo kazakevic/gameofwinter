@@ -115,12 +115,21 @@ func (h *Hub) AnnounceZombieLoc(zombie *models.Zombie) {
 	for dead == false {
 		time.Sleep(5000 * time.Millisecond)
 		rand.Seed(time.Now().UnixNano())
-		zombie.ChangeLoc(rand.Intn(10), rand.Intn(30))
+
+		posY := zombie.PositionY + 1
+
+		zombie.ChangeLoc(rand.Intn(10), posY)
 		x, y := zombie.GetLoc()
 		s := fmt.Sprintf("WALK night-king x:%d y:%d \n", x, y)
 
 		if zombie.Status == "dead" {
 			s = "night-king is dead. This is the end for now. \n"
+			dead = true
+		}
+
+		if zombie.PositionY >= world.MaxY {
+			zombie.Status = "win"
+			s = "night-king have reached the wall. GAME OVER! \n"
 			dead = true
 		}
 

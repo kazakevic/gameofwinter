@@ -1,11 +1,5 @@
 package models
 
-//MaxX - max world width
-const MaxX = 10
-
-//MaxY - max world heigth
-const MaxY = 30
-
 /*
 World model
 */
@@ -13,6 +7,20 @@ type World struct {
 	Players map[string]Player
 	Zombies map[interface{}]Zombie
 	Winner  Player
+	MaxX    int
+	MaxY    int
+}
+
+func NewWorld(x, y int) *World {
+	w := new(World)
+	w.MaxX = x
+	w.MaxY = y
+	w.Players = make(map[string]Player)
+	return w
+}
+
+func (w *World) GetSize() (int, int) {
+	return w.MaxX, w.MaxY
 }
 
 func (w *World) AddPlayers(player Player) {

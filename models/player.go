@@ -13,9 +13,10 @@ type Player struct {
 }
 
 func (p *Player) Spawn() {
+
 	rand.Seed(time.Now().UnixNano())
-	p.PositionX = rand.Intn(MaxX)
-	p.PositionY = rand.Intn(MaxY)
+	p.PositionX = rand.Intn(10)
+	p.PositionY = 30
 	if p.PositionX == 0 {
 		p.PositionX++
 	}

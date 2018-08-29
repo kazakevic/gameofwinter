@@ -15,15 +15,17 @@ var addr = flag.String("addr", ":8080", "http service address")
 
 //Globals
 var zombie = models.Zombie{Status: "alive"}
-var world = models.World{}
+
+//Create world 10x30
+var world = models.NewWorld(10, 30)
 
 func main() {
-	world.Players = make(map[string]models.Player)
+
 	flag.Parse()
 	hub := newHub()
 	go hub.run()
 	go hub.AnnounceZombieLoc(&zombie)
-	go hub.AnnounceWinner(&world)
+	go hub.AnnounceWinner(world)
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
