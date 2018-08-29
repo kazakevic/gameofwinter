@@ -1,5 +1,10 @@
 package models
 
+import (
+	"math/rand"
+	"time"
+)
+
 /*
 World model
 */
@@ -19,12 +24,18 @@ func NewWorld(x, y int) *World {
 	return w
 }
 
-func (w *World) GetSize() (int, int) {
-	return w.MaxX, w.MaxY
-}
-
 func (w *World) AddPlayers(player Player) {
 	w.Players[player.Id] = player
+}
+
+/*
+SpawnPlayer - add new player to the world
+*/
+func (w *World) SpawnPlayer(id, username string) {
+	rand.Seed(time.Now().UnixNano())
+	x := rand.Intn(w.MaxX)
+	player := Player{Id: id, Username: username, PositionX: x, PositionY: w.MaxY}
+	w.AddPlayers(player)
 }
 
 func (w *World) DeletePlayer(playerId string) {

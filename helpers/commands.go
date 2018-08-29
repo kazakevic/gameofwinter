@@ -9,7 +9,7 @@ import (
 /*
 DetectStartGame detect start command in message
 */
-func DetectStarGame(message []byte) bool {
+func DetectStartGame(message []byte) bool {
 	re := regexp.MustCompile(`(?mi)^(Start)\s(.*)`)
 	match := re.MatchString(string(message))
 

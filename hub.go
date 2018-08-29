@@ -108,19 +108,21 @@ func (h *Hub) NewMessage(message, messageType, sender string) {
 }
 
 /*
-AnnounceZombieLoc - announces where is zombie now
+UpdateZombieLoc - announces where is zombie now
 */
-func (h *Hub) AnnounceZombieLoc(zombie *models.Zombie) {
+func (h *Hub) UpdateZombieLoc(zombie *models.Zombie, world *models.World) {
 	var dead = false
+
 	for dead == false {
 		time.Sleep(5000 * time.Millisecond)
 		rand.Seed(time.Now().UnixNano())
 
 		posY := zombie.PositionY + 1
 
-		zombie.ChangeLoc(rand.Intn(10), posY)
+		zombie.ChangeLoc(rand.Intn(world.MaxX), posY)
+
 		x, y := zombie.GetLoc()
-		s := fmt.Sprintf("WALK night-king x:%d y:%d \n", x, y)
+		s := fmt.Sprintf("WALK [night-king] x:%d y:%d \n", x, y)
 
 		if zombie.Status == "dead" {
 			s = "night-king is dead. This is the end for now. \n"
@@ -139,17 +141,19 @@ func (h *Hub) AnnounceZombieLoc(zombie *models.Zombie) {
 }
 
 /*
-AnnounceWinner - announces who is that hero who killed zombie
+Announce - announces who is that hero who killed zombie
 */
-func (h *Hub) AnnounceWinner(world *models.World) {
+func (h *Hub) Announce(world *models.World) {
 	for {
-		time.Sleep(10000 * time.Millisecond)
 
+		time.Sleep(10000 * time.Millisecond)
 		s := "Still no winner in this battle :-( \n"
 
 		if len(world.Winner.Username) > 1 {
 			s = fmt.Sprintf("Winner now is [%s] \n", world.Winner.Username)
 		}
+
+		s += fmt.Sprintf("Currently [%d] players online \n", world.GetOnlineCount())
 
 		h.NewMessage(s, "All", "")
 	}

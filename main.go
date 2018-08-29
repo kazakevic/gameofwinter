@@ -24,8 +24,8 @@ func main() {
 	flag.Parse()
 	hub := newHub()
 	go hub.run()
-	go hub.AnnounceZombieLoc(&zombie)
-	go hub.AnnounceWinner(world)
+	go hub.UpdateZombieLoc(&zombie, world)
+	go hub.Announce(world)
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
